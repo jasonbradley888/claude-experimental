@@ -1,13 +1,20 @@
 """Template analysis and export tools — cross-platform, no COM dependency.
 
-This module provides 7 tools for analyzing and extracting .cwp template packages:
+This module provides tools for analyzing and extracting .cwp template packages:
+
 - analyze_template_package: Overview of package structure and templates
+- get_package_manifest: Every field in manifest.xml + full <File> inventory with MD5
+- get_file_inventory: Every inner-zip file, grouped by category (style, doc, db, image, ...)
 - list_template_cells: Cell/field names for a specific template
 - search_template_cells: Regex search across all template cells
 - get_template_structure: OLE2 structural metadata for a template
+- get_document_outline: Structured bookmarks + sections + paragraph index
 - export_template_cells: Export cell inventory to JSON/CSV
 - export_template_structure: Full per-template structural dump
 - export_full_package: One-shot comprehensive extraction
+
+Standalone .cvw tools: analyze_cvw_file, list_cvw_cells, get_cvw_structure,
+get_cvw_document_outline, export_cvw_file.
 
 These tools work on Mac, Linux, and Windows — no Working Papers installation required.
 """
@@ -23,7 +30,7 @@ from typing import Any
 
 from mcp.types import Tool
 
-from .cwp_reader import CwpReader, CvwReader
+from .cwp_reader import CvwReader, CwpReader
 from .errors import with_error_handling
 from .export import (
     export_full_package,
@@ -152,6 +159,117 @@ Returns:
 
 Example:
     get_template_structure(cwp_path="...", template_code="ENGL")
+""",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "cwp_path": {
+                    "type": "string",
+                    "description": "Full path to the .cwp template file",
+                },
+                "template_code": {
+                    "type": "string",
+                    "description": "Template code (e.g., 'ENGL', 'FRAUD')",
+                },
+            },
+            "required": ["cwp_path", "template_code"],
+        },
+    ),
+    Tool(
+        name="get_package_manifest",
+        description="""Return the complete manifest.xml content for a .cwp package.
+
+Unlike analyze_template_package (which only surfaces 6 common fields), this
+tool returns every element in the manifest — packager flags, branding
+(watermark, EULA, icon), version ranges, and the complete <File> inventory
+(each with MD5 hash and a flag indicating whether it is present in the
+inner zip). Works offline — no Working Papers required.
+
+Args:
+    cwp_path: Full path to the .cwp template file
+
+Returns:
+    Dict with:
+      - raw: every manifest element (nested)
+      - files: list of {filename, md5, folder, present_in_inner_zip, inner_zip_size}
+      - files_folder: the <Files>/<FolderName> value
+
+Example:
+    get_package_manifest(cwp_path="~/Templates/Frazier-Deeter.cwp")
+""",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "cwp_path": {
+                    "type": "string",
+                    "description": "Full path to the .cwp template file",
+                },
+            },
+            "required": ["cwp_path"],
+        },
+    ),
+    Tool(
+        name="get_file_inventory",
+        description="""Enumerate every file inside a .cwp package's inner zip, grouped by category.
+
+Surfaces the non-.cvw content that analyze_template_package ignores:
+styles (.sty/.cgf), embedded documents (.docx/.xlsx/.pdf), dBASE tables
+(.dbf/.cdx/.fpt), images (.bmp), etc. Also cross-references the manifest
+to report drift (files declared but missing, or present but undeclared).
+Works offline — no Working Papers required.
+
+Args:
+    cwp_path: Full path to the .cwp template file
+
+Returns:
+    Dict with:
+      - total_files: count
+      - by_category: {category: [{filename, size, extension}]}
+      - by_extension: {ext: count}
+      - manifest_only: filenames declared in manifest but missing from zip
+      - zip_only: filenames present in zip but not declared in manifest
+
+Example:
+    get_file_inventory(cwp_path="~/Templates/Frazier-Deeter.cwp")
+""",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "cwp_path": {
+                    "type": "string",
+                    "description": "Full path to the .cwp template file",
+                },
+            },
+            "required": ["cwp_path"],
+        },
+    ),
+    Tool(
+        name="get_document_outline",
+        description="""Return structured bookmarks + sections + paragraph offsets for a template.
+
+Parses Index/Bookmarks (length-prefixed name/label records), Index/Sect
+(12-byte header + 16-byte records), and Index/Para (u32 paragraph byte
+offsets) from the template's OLE2 structure. Gives the caller a document
+outline — number of sections, paragraph boundaries, named bookmarks —
+without needing CaseView. Works offline — no Working Papers required.
+
+Requires olefile: pip install olefile
+
+Args:
+    cwp_path: Full path to the .cwp template file
+    template_code: Template code (e.g., "ENGL", "FRAUD")
+
+Returns:
+    Dict with:
+      - bookmarks: [{name, label, meta}]
+      - sections: [{index, u32_0, u32_1, u32_2, u32_3}]
+      - paragraphs: [offset_u32, …] (monotonic ascending)
+      - bookmark_count / section_count / paragraph_count
+      - parse_warnings: present only if the binary format deviates from
+        the expected layout
+
+Example:
+    get_document_outline(cwp_path="...", template_code="ENGL")
 """,
         inputSchema={
             "type": "object",
@@ -369,6 +487,34 @@ Returns:
         },
     ),
     Tool(
+        name="get_cvw_document_outline",
+        description="""Return structured bookmarks + section/paragraph index for a .cvw file.
+
+Same as get_document_outline but for a .cvw file outside any .cwp package.
+Parses Index/Bookmarks, Index/Sect, and Index/Para streams. Useful when
+you have a raw CaseView template file extracted from somewhere else.
+Works offline.
+
+Requires olefile: pip install olefile
+
+Args:
+    cvw_path: Full path to the .cvw file
+
+Returns:
+    Dict with bookmarks, sections, paragraphs (see get_document_outline).
+""",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "cvw_path": {
+                    "type": "string",
+                    "description": "Full path to the standalone .cvw file",
+                },
+            },
+            "required": ["cvw_path"],
+        },
+    ),
+    Tool(
         name="export_cvw_file",
         description="""Comprehensive extraction of a standalone .cvw file to JSON.
 
@@ -487,6 +633,27 @@ def get_template_structure(cwp_path: str, template_code: str) -> dict[str, Any]:
         return reader.get_template_structure(template_code)
 
 
+@with_error_handling
+def get_package_manifest(cwp_path: str) -> dict[str, Any]:
+    """Return the complete manifest.xml content for a .cwp package."""
+    with CwpReader(cwp_path) as reader:
+        return reader.get_package_manifest()
+
+
+@with_error_handling
+def get_file_inventory(cwp_path: str) -> dict[str, Any]:
+    """Enumerate every file inside a .cwp package's inner zip, grouped by category."""
+    with CwpReader(cwp_path) as reader:
+        return reader.get_file_inventory()
+
+
+@with_error_handling
+def get_document_outline(cwp_path: str, template_code: str) -> dict[str, Any]:
+    """Return structured bookmarks + section index + paragraph offsets for a template."""
+    with CwpReader(cwp_path) as reader:
+        return reader.get_document_outline(template_code)
+
+
 # === Handler Functions (standalone .cvw tools) ===
 
 
@@ -555,6 +722,13 @@ def get_cvw_structure(cvw_path: str) -> dict[str, Any]:
 
 
 @with_error_handling
+def get_cvw_document_outline(cvw_path: str) -> dict[str, Any]:
+    """Return document outline for a standalone .cvw file."""
+    with CvwReader(cvw_path) as reader:
+        return reader.get_document_outline()
+
+
+@with_error_handling
 def export_cvw_file(cvw_path: str, output_path: str) -> dict[str, Any]:
     """Comprehensive extraction of a standalone .cvw file to JSON."""
     out = Path(output_path)
@@ -565,6 +739,7 @@ def export_cvw_file(cvw_path: str, output_path: str) -> dict[str, Any]:
         bookmarks = reader.get_bookmarks()
         cells = reader.get_cells()
         readable_content = reader.get_readable_content()
+        outline = reader.get_document_outline()
 
         result: dict[str, Any] = {
             "exported_at": datetime.now(timezone.utc).isoformat(),
@@ -576,6 +751,7 @@ def export_cvw_file(cvw_path: str, output_path: str) -> dict[str, Any]:
                 "names": cells,
             },
             "bookmarks": bookmarks,
+            "outline": outline,
             "streams": {
                 "sizes": stream_sizes,
                 "total_size": sum(stream_sizes.values()),
@@ -607,6 +783,9 @@ HANDLERS: dict[str, Any] = {
     "list_template_cells": list_template_cells,
     "search_template_cells": search_template_cells,
     "get_template_structure": get_template_structure,
+    "get_package_manifest": get_package_manifest,
+    "get_file_inventory": get_file_inventory,
+    "get_document_outline": get_document_outline,
     "export_template_cells": export_template_cells,
     "export_template_structure": export_template_structure,
     "export_full_package": export_full_package,
@@ -615,5 +794,6 @@ HANDLERS: dict[str, Any] = {
     "analyze_cvw_file": analyze_cvw_file,
     "list_cvw_cells": list_cvw_cells,
     "get_cvw_structure": get_cvw_structure,
+    "get_cvw_document_outline": get_cvw_document_outline,
     "export_cvw_file": export_cvw_file,
 }

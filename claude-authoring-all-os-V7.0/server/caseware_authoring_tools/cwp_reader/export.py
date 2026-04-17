@@ -79,6 +79,7 @@ def export_template_structure(
         cells = reader.get_template_cells(template_code)
         structure = reader.get_template_structure(template_code)
         readable = reader.get_template_readable_content(template_code)
+        outline = reader.get_document_outline(template_code)
 
         # Analyze cell prefixes
         prefix_analysis = _analyze_prefixes(cells)
@@ -92,6 +93,7 @@ def export_template_structure(
                 "prefix_analysis": prefix_analysis,
             },
             "bookmarks": structure.get("bookmarks", []),
+            "outline": outline,
             "streams": {
                 "sizes": structure.get("stream_sizes", {}),
                 "total_size": structure.get("total_ole_size", 0),
@@ -132,6 +134,8 @@ def export_full_package(
 
     with CwpReader(cwp_path) as reader:
         info = reader.get_package_info()
+        manifest = reader.get_package_manifest()
+        inventory = reader.get_file_inventory()
         templates_list = reader.list_templates()
 
         templates_data: dict[str, Any] = {}
@@ -172,11 +176,18 @@ def export_full_package(
             except ImportError:
                 template_entry["readable_content"] = {"error": "olefile not installed"}
 
+            try:
+                template_entry["outline"] = reader.get_document_outline(code)
+            except ImportError:
+                template_entry["outline"] = {"error": "olefile not installed"}
+
             templates_data[code] = template_entry
 
         result = {
             "exported_at": datetime.now(timezone.utc).isoformat(),
             "package": info,
+            "manifest": manifest,
+            "inventory": inventory,
             "template_count": len(templates_data),
             "total_cells": total_cells,
             "templates": templates_data,
