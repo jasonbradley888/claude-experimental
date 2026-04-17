@@ -2,7 +2,7 @@
 
 ![Extension Version](https://img.shields.io/badge/version-7.0.0-blue.svg)
 
-Welcome to the Caseware Gateway V7.0! This is a unified MCP (Multi-Channel Processing) gateway that provides approximately 92 tools across various categories including:
+A unified MCP gateway that provides approximately 92 tools across various categories including:
 
 - Authoring
 - Engagement
