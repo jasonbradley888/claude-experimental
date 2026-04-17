@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+.DS_Store
+*.egg-info
+.build-venv
+.venv
+*.db
+.pytest_cache
+server/references/extension-audit-*.md
+server/references/mcpb-manifest-spec.md
+server/tests
+server/tests/*

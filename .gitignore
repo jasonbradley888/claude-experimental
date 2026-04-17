@@ -1,0 +1,45 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv*/
+venv/
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Claude Code
+.mcp.json
+.claude/
+
+# Environment files
+.env
+**/.env
+.env.local
+.env.*.local
+
+# Extension build artifacts
+*.mcpb
+*.zip
+*.pkg
+
+# Build and dist directories
+build/
+dist/
+.build-venv/
+
+# Knowledge graph databases
+*.db
+
+# pytest
+.pytest_cache/

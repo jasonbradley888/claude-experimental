@@ -1,0 +1,206 @@
+{
+  "manifest_version": "0.4",
+  "name": "claude-CWI-experimental",
+  "display_name": "Claude CWI Experimental",
+  "version": "7.0.0",
+  "description": "Unified MCP gateway for Caseware Cloud: authoring, engagement management, workflow, analytics, SE API, and offline CWP template analysis.",
+  "long_description": "## Caseware Gateway\n\nA unified MCP extension providing 85+ tools for working with Caseware Cloud and CaseWare Working Papers.\n\n### Tool Categories\n- **Authoring** — author checklists, queries, and letters directly to Caseware Cloud via MCP proxy\n- **Engagement** — create, lock, unlock, rollforward engagements; manage users, roles, and templates\n- **Workflow** — manage attachments, document signing/publishing, events, milestones, and audit history\n- **Analytics** — browse catalog, trigger analytics, monitor status, download results and notebooks\n- **SE API** — file upload/download, suggestions, risk assessments, tags\n- **Knowledge Graph** — track workflows, entities, and relationships\n- **Payload Builder** — validated JSON payload construction with response type detection\n- **CWP Template Reader** — offline .cwp template analysis (no CaseWare installation needed)\n\n### Supported Document Types\n- Checklists (groups, headings, procedures, conclusions)\n- Queries (question sets with response columns)\n- Letters (dynamic content with formula support)\n- CWP template packages (.cwp files)",
+  "author": {
+    "name": "Caseware International",
+    "url": "https://github.com/caseware/claude-authoring"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caseware/claude-authoring"
+  },
+  "homepage": "https://github.com/caseware/claude-authoring",
+  "documentation": "https://github.com/caseware/claude-authoring/blob/main/README.md",
+  "support": "https://github.com/caseware/claude-authoring/issues",
+  "privacy_policies": ["https://www.caseware.com/privacy-policy"],
+  "icon": "icon.png",
+  "keywords": ["caseware", "audit", "authoring", "checklist", "document-conversion", "knowledge-graph", "caseware-cloud", "engagement", "workflow", "analytics", "gateway", "cwp", "working-papers"],
+  "tools_generated": true,
+  "compatibility": {
+    "platforms": ["darwin", "win32"],
+    "runtimes": {
+      "python": ">=3.10"
+    }
+  },
+  "server": {
+    "type": "uv",
+    "entry_point": "server/main.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--directory", "${__dirname}/server", "python", "main.py"],
+      "env": {
+        "KG_PATH": "${user_config.kg_path}",
+        "ENGAGEMENT_URL": "${user_config.engagement_url}",
+        "BEARER_TOKEN": "${user_config.bearer_token}",
+        "CASEWARE_HOST": "${user_config.caseware_host}",
+        "CASEWARE_FIRM_NAME": "${user_config.caseware_firm_name}",
+        "CASEWARE_CLIENT_ID": "${user_config.caseware_client_id}",
+        "CASEWARE_CLIENT_SECRET": "${user_config.caseware_client_secret}"
+      }
+    }
+  },
+  "tools": [
+    { "name": "initialize_authoring_tools", "description": "Show overview of available tools and how to get started" },
+    { "name": "kg_create_entities", "description": "Create entities in the Knowledge Graph" },
+    { "name": "kg_create_relations", "description": "Create relations between Knowledge Graph entities" },
+    { "name": "kg_add_observations", "description": "Add observations to a Knowledge Graph entity" },
+    { "name": "kg_query", "description": "Query Knowledge Graph entities by pattern, type, or relationship" },
+    { "name": "kg_search", "description": "Full-text search across the Knowledge Graph" },
+    { "name": "kg_export_mermaid", "description": "Export a Mermaid diagram from the Knowledge Graph" },
+    { "name": "list_references", "description": "List all available authoring reference guides" },
+    { "name": "load_reference", "description": "Load an authoring reference guide by name" },
+    { "name": "build_payload", "description": "Build validated Caseware Cloud payload from a procedure outline" },
+    { "name": "convert_document", "description": "Extract text content from a document and detect its type" },
+
+    { "name": "document-manager", "description": "Manage engagement documents (Cloud proxy)" },
+    { "name": "engagement-properties", "description": "Read engagement properties (Cloud proxy)" },
+    { "name": "checklist-save", "description": "Author checklists to Caseware Cloud" },
+    { "name": "checklist-get", "description": "Retrieve checklists from Caseware Cloud" },
+    { "name": "query-save", "description": "Author queries to Caseware Cloud" },
+    { "name": "query-get", "description": "Retrieve queries from Caseware Cloud" },
+    { "name": "statement-save", "description": "Author letters to Caseware Cloud" },
+    { "name": "statement-get", "description": "Retrieve letters from Caseware Cloud" },
+    { "name": "controls-get", "description": "Retrieve controls from Caseware Cloud" },
+    { "name": "controls-save", "description": "Save controls to Caseware Cloud" },
+    { "name": "risks-get", "description": "Retrieve risks from Caseware Cloud" },
+    { "name": "risks-save", "description": "Save risks to Caseware Cloud" },
+    { "name": "trial-balance-get", "description": "Retrieve trial balance data" },
+    { "name": "materiality-get", "description": "Retrieve materiality data" },
+    { "name": "accounts-assign", "description": "Assign accounts in Caseware Cloud" },
+    { "name": "adjustments-get", "description": "Retrieve adjustments from Caseware Cloud" },
+    { "name": "document-get", "description": "Get document content from Caseware Cloud" },
+    { "name": "issues-get", "description": "Retrieve issues from Caseware Cloud" },
+
+    { "name": "file-upload", "description": "Upload a file to the engagement (SE API)" },
+    { "name": "file-download", "description": "Download a file from the engagement (SE API)" },
+    { "name": "suggestion-get", "description": "Retrieve pending suggestions (SE API)" },
+    { "name": "suggestion-commit", "description": "Commit a suggestion set (SE API)" },
+    { "name": "risk-assessment-get", "description": "Retrieve risk assessments (SE API)" },
+    { "name": "risk-assessment-save", "description": "Save risk assessments (SE API)" },
+    { "name": "tags-get", "description": "Retrieve tags and categories (SE API)" },
+    { "name": "tags-save", "description": "Create or update tags (SE API)" },
+
+    { "name": "engagement-get", "description": "Get engagement properties and details" },
+    { "name": "engagement-create", "description": "Create a new engagement from a firm template" },
+    { "name": "engagement-lock", "description": "Lock the engagement for review" },
+    { "name": "engagement-unlock", "description": "Unlock the engagement for editing" },
+    { "name": "engagement-rollforward", "description": "Roll forward the engagement to a new period" },
+    { "name": "engagement-copyobjects", "description": "Copy procedures/documents from another engagement" },
+    { "name": "users-get", "description": "List staff members in the engagement" },
+    { "name": "roles-get", "description": "List available roles and role sets" },
+    { "name": "staff-assign", "description": "Assign a staff member to a role" },
+    { "name": "firm-templates-get", "description": "List available engagement templates" },
+    { "name": "visibility-get", "description": "Get visibility rules for the engagement" },
+
+    { "name": "attachments-get", "description": "Get attachments linked to a procedure or document" },
+    { "name": "attachments-save", "description": "Attach a file to a procedure or document" },
+    { "name": "attachments-sign", "description": "Sign off an attachment as reviewed" },
+    { "name": "document-grant-access", "description": "Grant staff access to a document" },
+    { "name": "document-publish", "description": "Publish a completed document" },
+    { "name": "document-sign", "description": "Sign off a document as reviewed/approved" },
+    { "name": "events-get", "description": "Get events and milestones" },
+    { "name": "events-save", "description": "Create or update an event or milestone" },
+    { "name": "history-get", "description": "Get audit trail of changes" },
+    { "name": "history-files", "description": "Get deleted/modified files history" },
+
+    { "name": "analytics-get-catalog", "description": "List all available analytics" },
+    { "name": "analytics-get-catalog-by-analytic-id", "description": "Get definition for a specific analytic" },
+    { "name": "analytics-get-predefined-configs", "description": "List predefined analytics configurations" },
+    { "name": "analytics-get-predefined-config-by-id", "description": "Get a specific predefined configuration" },
+    { "name": "analytics-get-predefined-config-by-analytic-id", "description": "Get configs for a specific analytic" },
+    { "name": "analytics-get-predefined-configs-by-tags", "description": "Filter predefined configs by tags" },
+    { "name": "analytics-trigger", "description": "Trigger analytics to run on demand" },
+    { "name": "analytics-get-status", "description": "Check analytics execution status" },
+    { "name": "analytics-get-status-grouped-by-dataset-type", "description": "Get status grouped by dataset type" },
+    { "name": "analytics-get-execution-details", "description": "Get execution details for a configuration" },
+    { "name": "analytics-get-execution-details-by-config-ids", "description": "Get execution details for multiple configs" },
+    { "name": "analytics-get-execution-details-by-result-id", "description": "Look up execution details by result ID" },
+    { "name": "analytics-get-dataset", "description": "Get output dataset download URLs" },
+    { "name": "analytics-get-notebook-content", "description": "Get full notebook content for a result" },
+    { "name": "analytics-get-notebook-data", "description": "Get structured output data from a notebook" },
+    { "name": "analytics-get-permissions", "description": "Get current user analytics permissions" },
+    { "name": "analytics-delete-datasets", "description": "Delete analytics datasets (destructive)" },
+
+    { "name": "analyze_template_package", "description": "Analyze a .cwp template package structure" },
+    { "name": "list_template_cells", "description": "Get cell/field names for a CWP template" },
+    { "name": "search_template_cells", "description": "Regex search across all CWP template cells" },
+    { "name": "get_template_structure", "description": "Get OLE2 structural metadata for a template" },
+    { "name": "export_template_cells", "description": "Export CWP cell inventory to JSON/CSV" },
+    { "name": "export_template_structure", "description": "Export full template structural dump" },
+    { "name": "export_full_package", "description": "Comprehensive extraction of entire .cwp package" },
+
+    { "name": "analyze_cvw_file", "description": "Analyze a standalone .cvw template file structure" },
+    { "name": "list_cvw_cells", "description": "Attempt to extract cell names from a standalone .cvw file" },
+    { "name": "get_cvw_structure", "description": "Get OLE2 structure metadata for a standalone .cvw file" },
+    { "name": "export_cvw_file", "description": "Comprehensive extraction of a standalone .cvw file to JSON" }
+  ],
+  "prompts": [
+    { "name": "initialize-authoring-tools", "description": "Full overview of Caseware Gateway and suggested first steps", "text": "Show the full overview of Caseware Gateway — available tools, supported formats, reference guides, and how to get started." },
+    { "name": "reference-hierarchy-rules", "description": "Depth marker system ([D0]-[D4], [R], [C], [G]) and validation rules", "text": "Load the hierarchy rules reference for depth markers and checklist validation." },
+    { "name": "reference-checklist-authoring", "description": "Checklist payload structure, response type detection, and chunking", "text": "Load the checklist authoring reference for payload structure and chunking strategy." },
+    { "name": "reference-query-authoring", "description": "Query payload structure with question sets and response columns", "text": "Load the query authoring reference for payload structure and templating." },
+    { "name": "reference-letter-authoring", "description": "Letter structure, two-step creation, dynamic elements", "text": "Load the letter authoring reference for structure and dynamic element detection." },
+    { "name": "reference-knowledge-graph", "description": "Knowledge Graph entity naming, relation types, and CLI usage", "text": "Load the knowledge graph reference for entity naming and CLI usage." },
+    { "name": "reference-caseware-cloud-mcp", "description": "Complete Caseware Cloud MCP API reference", "text": "Load the Caseware Cloud MCP server reference for tools, schemas, and activation." },
+    { "name": "reference-document-type-detection", "description": "Weighted scoring algorithm for document type classification", "text": "Load the document type detection reference for classifying documents as checklist, query, or letter." },
+    { "name": "reference-payload-schemas", "description": "Consolidated JSON payload schemas for checklist, query, and letter MCP submissions", "text": "Load the payload schemas reference for checklist, query, and letter JSON structures." },
+    { "name": "workflow-convert", "description": "Read and analyse source documents — text extraction, structure analysis, and procedure outline", "text": "Load the document reading and analysis workflow for extracting content and producing procedure outlines." },
+    { "name": "workflow-author", "description": "Author documents to Caseware Cloud — evaluator-optimizer loop, chunking, and reporting", "text": "Load the authoring workflow for submitting documents to Caseware Cloud." },
+    { "name": "workflow-full", "description": "Full end-to-end authoring workflow — read, analyse, author, and report", "text": "Load the full end-to-end authoring workflow from reading through to Caseware Cloud submission." },
+    { "name": "workflow-identify-type", "description": "Document type identification — decision tree and weighted scoring for checklist/query/letter routing", "text": "Load the document type identification workflow for classifying and routing documents." },
+    { "name": "reference-outline-format", "description": "Procedure outline schema for build_payload tool — checklist, query, letter formats", "text": "Load the procedure outline format reference for building payloads with the build_payload tool." },
+    { "name": "workflow-visualize", "description": "Visualize Knowledge Graph workflows as Mermaid flowcharts", "text": "Load the visualization workflow for generating Mermaid diagrams from Knowledge Graph data." }
+  ],
+  "user_config": {
+    "kg_path": {
+      "type": "string",
+      "title": "Knowledge Graph Database Location",
+      "description": "Directory for the Knowledge Graph SQLite database. Leave blank for default.",
+      "required": false
+    },
+    "engagement_url": {
+      "type": "string",
+      "title": "Caseware Cloud Engagement URL",
+      "description": "MCP endpoint URL (e.g., https://us.cwcloudpartner.com/.../api/v1.16.0/mcp). Required for Cloud proxy tools.",
+      "required": false
+    },
+    "bearer_token": {
+      "type": "string",
+      "title": "Bearer Token (Legacy)",
+      "description": "Static bearer token for Cloud proxy. Prefer client credentials below.",
+      "required": false,
+      "sensitive": true
+    },
+    "caseware_host": {
+      "type": "string",
+      "title": "Caseware Host",
+      "description": "Caseware Cloud domain (e.g., https://us.cwcloudpartner.com). Required for engagement, workflow, analytics, and SE tools.",
+      "required": false
+    },
+    "caseware_firm_name": {
+      "type": "string",
+      "title": "Firm Name",
+      "description": "Caseware firm identifier.",
+      "required": false
+    },
+    "caseware_client_id": {
+      "type": "string",
+      "title": "Client ID",
+      "description": "OAuth2 client ID for API authentication.",
+      "required": false,
+      "sensitive": true
+    },
+    "caseware_client_secret": {
+      "type": "string",
+      "title": "Client Secret",
+      "description": "OAuth2 client secret for API authentication.",
+      "required": false,
+      "sensitive": true
+    }
+  }
+}
