@@ -231,7 +231,7 @@ Available Caseware Cloud tools include:
 
 Configure your **Engagement URL** and credentials in the extension settings to enable Caseware Cloud tools. Without this, only Knowledge Graph tools, CWP Template Reader, and reference prompts are available.
 
-To configure: Open Claude Desktop Settings > Extensions > Caseware Gateway > enter your engagement URL and credentials.
+To configure: Open Claude Desktop Settings > Extensions > Caseware CWI Experimental > enter your engagement URL and credentials.
 """
 
     # Build engagement/workflow/analytics sections if clients available
@@ -288,7 +288,7 @@ To configure: Open Claude Desktop Settings > Extensions > Caseware Gateway > ent
 """
 
     return f"""\
-# Caseware Gateway
+# Caseware CWI Experimental
 
 Welcome! This gateway provides unified access to Caseware Cloud — authoring, engagement management, workflow, analytics, and offline template analysis.
 
@@ -387,7 +387,7 @@ def _build_instructions() -> str:
     enforced without requiring Claude to load reference prompts first.
     """
     base = (
-        "You have access to the Caseware Gateway — a unified interface for authoring, "
+        "You have access to Caseware CWI Experimental — a unified interface for authoring, "
         "engagement management, workflow, analytics, and offline template analysis. "
         "For binary files (Word, Excel, PowerPoint), use the convert_document tool to extract text. "
         "For .cwp template packages, use the CWP Template Reader tools (always available, no auth needed).\n\n"
@@ -450,13 +450,13 @@ def _build_instructions() -> str:
             "engagement URL and credentials in the extension settings."
         )
     base += (
-        "\nWhen a user says 'Initialise Caseware Authoring Tools' or asks what tools are "
+        "\nWhen a user says 'Initialise Caseware CWI Experimental' or asks what tools are "
         "available, call the 'initialize_authoring_tools' tool to show the full workflow overview."
     )
     return base
 
 
-app = Server("caseware-gateway")
+app = Server("caseware-cwi-experimental")
 
 
 @app.list_prompts()
@@ -466,9 +466,9 @@ async def list_prompts() -> list[Prompt]:
         Prompt(
             name="initialize-authoring-tools",
             description=(
-                "Get a full overview of Caseware Authoring Tools — what's available, "
+                "Get a full overview of Caseware CWI Experimental — what's available, "
                 "how to use each tool, and suggested first steps. "
-                "Trigger by saying: Initialise Caseware Authoring Tools"
+                "Trigger by saying: Initialise Caseware CWI Experimental"
             ),
             arguments=[],
         ),
@@ -519,9 +519,9 @@ async def list_tools() -> list[Tool]:
         Tool(
             name="initialize_authoring_tools",
             description=(
-                "Show a full overview of Caseware Authoring Tools — available tools, "
+                "Show a full overview of Caseware CWI Experimental — available tools, "
                 "supported formats, and how to get started. Call this when the user says "
-                "'Initialise Caseware Authoring Tools' or asks what this server can do."
+                "'Initialise Caseware CWI Experimental' or asks what this server can do."
             ),
             inputSchema={"type": "object", "properties": {}},
         ),

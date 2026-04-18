@@ -1,10 +1,10 @@
 {
   "manifest_version": "0.4",
-  "name": "claude-CWI-experimental",
-  "display_name": "Claude CWI Experimental",
-  "version": "7.0.0",
+  "name": "caseware-cwi-experimental",
+  "display_name": "Caseware CWI Experimental",
+  "version": "7.1.0",
   "description": "Unified MCP gateway for Caseware Cloud: authoring, engagement management, workflow, analytics, SE API, and offline CWP template analysis.",
-  "long_description": "## Caseware Gateway\n\nA unified MCP extension providing 85+ tools for working with Caseware Cloud and CaseWare Working Papers.\n\n### Tool Categories\n- **Authoring** — author checklists, queries, and letters directly to Caseware Cloud via MCP proxy\n- **Engagement** — create, lock, unlock, rollforward engagements; manage users, roles, and templates\n- **Workflow** — manage attachments, document signing/publishing, events, milestones, and audit history\n- **Analytics** — browse catalog, trigger analytics, monitor status, download results and notebooks\n- **SE API** — file upload/download, suggestions, risk assessments, tags\n- **Knowledge Graph** — track workflows, entities, and relationships\n- **Payload Builder** — validated JSON payload construction with response type detection\n- **CWP Template Reader** — offline .cwp template analysis (no CaseWare installation needed)\n\n### Supported Document Types\n- Checklists (groups, headings, procedures, conclusions)\n- Queries (question sets with response columns)\n- Letters (dynamic content with formula support)\n- CWP template packages (.cwp files)",
+  "long_description": "## Caseware CWI Experimental\n\nA unified MCP extension providing 89 tools across 7 categories for working with Caseware Cloud and CaseWare Working Papers.\n\n### Tool Categories\n- **Authoring** — author checklists, queries, and letters directly to Caseware Cloud via MCP proxy\n- **Engagement** — create, lock, unlock, rollforward engagements; manage users, roles, and templates\n- **Workflow** — manage attachments, document signing/publishing, events, milestones, and audit history\n- **Analytics** — browse catalog, trigger analytics, monitor status, download results and notebooks\n- **SE API** — file upload/download, suggestions, risk assessments, tags\n- **Knowledge Graph** — track workflows, entities, and relationships\n- **Payload Builder** — validated JSON payload construction with response type detection\n- **CWP Template Reader** — offline .cwp and .cvw template analysis (no CaseWare installation needed)\n\n### Supported Document Types\n- Checklists (groups, headings, procedures, conclusions)\n- Queries (question sets with response columns)\n- Letters (dynamic content with formula support)\n- CWP template packages (.cwp files) and standalone CaseView templates (.cvw files)",
   "author": {
     "name": "Caseware International",
     "url": "https://github.com/caseware/claude-authoring"
@@ -130,6 +130,9 @@
     { "name": "list_template_cells", "description": "Get cell/field names for a CWP template" },
     { "name": "search_template_cells", "description": "Regex search across all CWP template cells" },
     { "name": "get_template_structure", "description": "Get OLE2 structural metadata for a template" },
+    { "name": "get_package_manifest", "description": "Return the complete manifest.xml content plus <File> inventory with MD5 hashes" },
+    { "name": "get_file_inventory", "description": "Enumerate every inner-zip file grouped by category, with manifest drift detection" },
+    { "name": "get_document_outline", "description": "Return structured bookmarks, sections, and paragraph offsets for a template" },
     { "name": "export_template_cells", "description": "Export CWP cell inventory to JSON/CSV" },
     { "name": "export_template_structure", "description": "Export full template structural dump" },
     { "name": "export_full_package", "description": "Comprehensive extraction of entire .cwp package" },
@@ -137,10 +140,11 @@
     { "name": "analyze_cvw_file", "description": "Analyze a standalone .cvw template file structure" },
     { "name": "list_cvw_cells", "description": "Attempt to extract cell names from a standalone .cvw file" },
     { "name": "get_cvw_structure", "description": "Get OLE2 structure metadata for a standalone .cvw file" },
+    { "name": "get_cvw_document_outline", "description": "Return structured bookmarks, sections, and paragraph offsets for a standalone .cvw file" },
     { "name": "export_cvw_file", "description": "Comprehensive extraction of a standalone .cvw file to JSON" }
   ],
   "prompts": [
-    { "name": "initialize-authoring-tools", "description": "Full overview of Caseware Gateway and suggested first steps", "text": "Show the full overview of Caseware Gateway — available tools, supported formats, reference guides, and how to get started." },
+    { "name": "initialize-authoring-tools", "description": "Full overview of Caseware CWI Experimental and suggested first steps", "text": "Show the full overview of Caseware CWI Experimental — available tools, supported formats, reference guides, and how to get started." },
     { "name": "reference-hierarchy-rules", "description": "Depth marker system ([D0]-[D4], [R], [C], [G]) and validation rules", "text": "Load the hierarchy rules reference for depth markers and checklist validation." },
     { "name": "reference-checklist-authoring", "description": "Checklist payload structure, response type detection, and chunking", "text": "Load the checklist authoring reference for payload structure and chunking strategy." },
     { "name": "reference-query-authoring", "description": "Query payload structure with question sets and response columns", "text": "Load the query authoring reference for payload structure and templating." },
